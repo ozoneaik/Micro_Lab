@@ -1,0 +1,40 @@
+23:33:25 **** Incremental Build of configuration Debug for project lab11 ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F401xC -DDEBUG -c -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:108:8: warning: implicit declaration of function 'sprintf' [-Wimplicit-function-declaration]
+        sprintf(text,"%.2d:%.2d:%.2d",hour,minute,second);
+        ^~~~~~~
+../Core/Src/main.c:108:8: warning: incompatible implicit declaration of built-in function 'sprintf'
+../Core/Src/main.c:108:8: note: include '<stdio.h>' or provide a declaration of 'sprintf'
+../Core/Src/main.c:108:16: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+        sprintf(text,"%.2d:%.2d:%.2d",hour,minute,second);
+                ^~~~
+../Core/Src/main.c:108:16: note: expected 'char *' but argument is of type 'unsigned char *'
+../Core/Src/main.c:110:28: warning: pointer targets in passing argument 2 of 'Lcd_string' differ in signedness [-Wpointer-sign]
+           Lcd_string(&lcd, text);
+                            ^~~~
+In file included from ../Core/Src/main.c:26:0:
+../Core/Inc/lcd.h:87:6: note: expected 'char *' but argument is of type 'unsigned char *'
+ void Lcd_string(Lcd_HandleTypeDef * lcd, char * string);
+      ^~~~~~~~~~
+arm-none-eabi-gcc -o "lab11.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Phuwadech\STM32CubeIDE\workspace_1.3.0\lab11\STM32F401CCFX_FLASH.ld" --specs=nosys.specs -Wl,-Map="lab11.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: lab11.elf
+ 
+arm-none-eabi-objdump -h -S  lab11.elf  > "lab11.list"
+arm-none-eabi-objcopy  -O ihex  lab11.elf  "lab11.hex"
+arm-none-eabi-objcopy  -O binary  lab11.elf  "lab11.bin"
+arm-none-eabi-size   lab11.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8956	    120	   1584	  10660	   29a4	lab11.elf
+Finished building: default.size.stdout
+Finished building: lab11.hex
+Finished building: lab11.bin
+Finished building: lab11.list
+ 
+ 
+ 
+ 
+
+23:33:29 Build Finished. 0 errors, 4 warnings. (took 3s.340ms)
+
