@@ -111,17 +111,15 @@ int main(void)
 	  HAL_ADC_Start(&hadc1);
 	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 	  raw_adc = HAL_ADC_GetValue(&hadc1);
-	  if(raw_adc <= 2457){
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET); //red off
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); //green off
+	  if(raw_adc <= 2457)
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);//red on
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);//green off
-	  }
-	  else{
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);//red off
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);//green on
-	  }
-	  sprintf(msg,"Raw ADC : %d %%\r\n",(int)(raw_adc*100/4095));//raw_adc < 2460
+	  else
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);//green on
+	  sprintf(msg,"Raw ADC : %d %%\r\n",(int)(raw_adc*100/4095));
 	  HAL_UART_Transmit(&huart6, (uint8_t*)msg, strlen(msg), 100);
-	  HAL_Delay(500);
+	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
