@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
+#include "lcd.h"
 
 /* USER CODE END Includes */
 
@@ -45,8 +46,6 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
-UART_HandleTypeDef huart6;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -55,7 +54,6 @@ UART_HandleTypeDef huart6;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_USART6_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -74,7 +72,8 @@ int main(void)
   /* USER CODE BEGIN 1 */
 	uint32_t raw_adc = 0;
 	char msg[100];
-
+	Lcd_PortType ports[] = {GPIOB, GPIOB, GPIOB, GPIOB};
+	Lcd_PinType pins[] = {GPIO_PIN_2,GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,9 +95,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
-  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  Lcd_HandleTypeDef lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_7, GPIOB, GPIO_PIN_6, LCD_4_BIT_MODE);
+  Lcd_cursor(&lcd, 1, 4);
+  Lcd_string(&lcd, "Phuwadech");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,8 +118,9 @@ int main(void)
 	  else
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);//green on
 	  sprintf(msg,"Raw ADC : %d %%\r\n",(int)(raw_adc*100/4095));
-	  HAL_UART_Transmit(&huart6, (uint8_t*)msg, strlen(msg), 100);
 	  HAL_Delay(100);
+	  Lcd_cursor(&lcd, 0, 1);
+	  Lcd_string(&lcd, msg);
   }
   /* USER CODE END 3 */
 }
@@ -213,39 +214,6 @@ static void MX_ADC1_Init(void)
 }
 
 /**
-  * @brief USART6 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART6_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART6_Init 0 */
-
-  /* USER CODE END USART6_Init 0 */
-
-  /* USER CODE BEGIN USART6_Init 1 */
-
-  /* USER CODE END USART6_Init 1 */
-  huart6.Instance = USART6;
-  huart6.Init.BaudRate = 115200;
-  huart6.Init.WordLength = UART_WORDLENGTH_8B;
-  huart6.Init.StopBits = UART_STOPBITS_1;
-  huart6.Init.Parity = UART_PARITY_NONE;
-  huart6.Init.Mode = UART_MODE_TX_RX;
-  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart6) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART6_Init 2 */
-
-  /* USER CODE END USART6_Init 2 */
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -255,11 +223,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_0, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6 
+                          |GPIO_PIN_7|GPIO_PIN_2|GPIO_PIN_1|GPIO_PIN_0, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : PB3 PB4 PB5 PB6 
+                           PB7 PB2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6 
+                          |GPIO_PIN_7|GPIO_PIN_2;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB1 PB0 */
   GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_0;
